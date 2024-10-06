@@ -31,21 +31,52 @@ export default function RegisterForm() {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: RegisterBodyType) {
+  async function onSubmit(values: RegisterBodyType) {
+    debugger;
+    const result = await fetch(
+      `${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/register`,
+      {
+        body: JSON.stringify(values),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+      }
+    ).then((res) => res.json());
+    console.log(result);
+  }
+
+  function onError(values: any) {
     console.log(values);
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit, onError)}
+        className="space-y-2"
+      >
         <FormField
           control={form.control}
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Tên</FormLabel>
               <FormControl>
                 <Input placeholder="username" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -56,9 +87,22 @@ export default function RegisterForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>Mật khẩu</FormLabel>
               <FormControl>
-                <Input placeholder="password" {...field} />
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Xác nhận mật khẩu</FormLabel>
+              <FormControl>
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
