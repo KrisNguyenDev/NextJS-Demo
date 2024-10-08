@@ -41,8 +41,11 @@ export default function RegisterForm() {
         },
         method: "POST",
       }
-    ).then((res) => res.json());
-    console.log(result);
+    );
+
+    if (result.ok) {
+      console.log(result.json());
+    }
   }
 
   function onError(values: any) {

@@ -13,9 +13,6 @@ export default function RegisterPage() {
       <Card className="w-[350px] ">
         <CardHeader>
           <CardTitle>Register</CardTitle>
-          <CardDescription>
-            Register with your username and password.
-          </CardDescription>
         </CardHeader>
         <CardContent>
           <RegisterForm />
