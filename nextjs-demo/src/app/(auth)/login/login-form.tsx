@@ -9,9 +9,11 @@ import { Input } from '@/components/ui/input'
 import { LoginBody, LoginBodyType } from '@/schemaValidations/auth.schema'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
+import { useAppContext } from '@/context/AppProvider'
 
 export default function LoginForm() {
   const { toast } = useToast()
+  const { setSessionToken } = useAppContext()
 
   // 1. Define your form.
   const form = useForm<LoginBodyType>({
@@ -29,27 +31,38 @@ export default function LoginForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values)
+      }).then(async (res) => {
+        const payload = await res.json()
+        const data = { status: res.status, payload }
+        if (!res.ok) {
+          throw data
+        }
+        return data
       })
-
-      const payload = await result.json()
-      const data = { status: result.status, payload }
-
-      if (!result.ok) {
-        throw data
-      }
 
       toast({
-        description: data.payload?.message
+        description: result.payload?.message
       })
 
-      // Lưu token vào cookie
-      await fetch('/api/auth', {
+      console.log(result)
+
+      // lưu token vào cookie
+      const resultFromNextServer = await fetch('/api/auth', {
         method: 'POST',
-        body: JSON.stringify(payload),
+        body: JSON.stringify(result),
         headers: { 'Content-Type': 'application/json' }
+      }).then(async (res) => {
+        const data = await res.json()
+        if (!res.ok) {
+          throw data
+        }
+        return data
       })
 
-      return data
+      console.log(resultFromNextServer)
+
+      // set token vào context
+      setSessionToken(resultFromNextServer?.data?.token)
     } catch (error: any) {
       const errors = error.payload?.errors
 
