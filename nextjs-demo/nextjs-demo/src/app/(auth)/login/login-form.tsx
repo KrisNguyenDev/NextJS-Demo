@@ -2,18 +2,19 @@
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { LoginBody, LoginBodyType } from '@/schemaValidations/auth.schema'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
-import { useAppContext } from '@/context/AppProvider'
+import { useRouter } from 'next/navigation'
+import apiAuth from '@/apis/auth'
+import { sessionToken } from '@/lib/http'
 
 export default function LoginForm() {
   const { toast } = useToast()
-  const { setSessionToken } = useAppContext()
+  const router = useRouter()
 
   // 1. Define your form.
   const form = useForm<LoginBodyType>({
@@ -27,42 +28,18 @@ export default function LoginForm() {
   // 2. Define a submit handler.
   async function onSubmit(values: LoginBodyType) {
     try {
-      const result = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values)
-      }).then(async (res) => {
-        const payload = await res.json()
-        const data = { status: res.status, payload }
-        if (!res.ok) {
-          throw data
-        }
-        return data
-      })
+      const result = await apiAuth.login(values)
 
       toast({
-        description: result.payload?.message
+        title: 'Thành công',
+        description: result?.payload?.message
       })
-
-      console.log(result)
 
       // lưu token vào cookie
-      const resultFromNextServer = await fetch('/api/auth', {
-        method: 'POST',
-        body: JSON.stringify(result),
-        headers: { 'Content-Type': 'application/json' }
-      }).then(async (res) => {
-        const data = await res.json()
-        if (!res.ok) {
-          throw data
-        }
-        return data
-      })
+      const resultFromNextServer = await apiAuth.auth({ sessionToken: result.payload.data.token })
 
-      console.log(resultFromNextServer)
-
-      // set token vào context
-      setSessionToken(resultFromNextServer?.data?.token)
+      // chuyển đến page /me
+      router.push('/me')
     } catch (error: any) {
       const errors = error.payload?.errors
 

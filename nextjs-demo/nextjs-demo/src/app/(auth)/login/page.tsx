@@ -1,5 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import LoginForm from './login-form'
+import { Suspense } from 'react'
+import Loading from './loading'
 
 export default function LoginPage() {
   return (

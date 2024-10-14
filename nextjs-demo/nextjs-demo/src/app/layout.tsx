@@ -6,6 +6,7 @@ import Header from '@/components/header'
 import { Toaster } from '@/components/ui/toaster'
 import AppProvider from '@/context/AppProvider'
 import { cookies } from 'next/headers'
+import { useLayoutEffect } from 'react'
 
 const inter = Inter({ subsets: ['vietnamese'] })
 
@@ -21,10 +22,11 @@ export default function RootLayout({
 }>) {
   const cookieStore = cookies()
   const sessionToken = cookieStore.get('sessionToken')
+
   return (
     <html lang='en'>
       <head />
-      <body className={inter.className} suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning={false}>
         <Toaster />
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
           <AppProvider initialSessionToken={sessionToken?.value ?? ''}>
