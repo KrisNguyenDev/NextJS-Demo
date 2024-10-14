@@ -16,7 +16,7 @@ export default async function Profile() {
     <Card className='w-3/4 mx-auto mt-4'>
       <CardHeader>
         <CardTitle>Xin chào {result?.payload?.data?.name}</CardTitle>
-        <CardDescription>Chào mừng bạn</CardDescription>
+        <CardDescription>Chào mừng bạn nhé</CardDescription>
       </CardHeader>
       <CardContent>
         <div className='flex flex-col space-y-3'>
