@@ -10,6 +10,7 @@ const nextConfig = {
             },
         ],
     },
+    distDir: process.env.BUILD_DIR || '.next'
 };
 
 export default nextConfig;
